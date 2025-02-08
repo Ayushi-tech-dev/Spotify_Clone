@@ -1,5 +1,5 @@
 let currentSong = new Audio();
-let songs;
+let songs = [];
 let currFolder;
 
 function secondsToMinutesSeconds(seconds) {
@@ -21,7 +21,7 @@ async function getSongs(folder) {
     try {
         let response = await fetch(`https://spotify-clone-qcq2.onrender.com/songs/${folder}/`);
         if (!response.ok) throw new Error(`Failed to fetch songs for folder ${folder}`);
-        
+
         let div = document.createElement("div");
         let text = await response.text();
         div.innerHTML = text;
@@ -31,7 +31,7 @@ async function getSongs(folder) {
         for (let index = 0; index < as.length; index++) {
             const element = as[index];
             if (element.href.endsWith(".mp3")) {
-                songs.push(element.href.split(`/songs/${folder}/`)[1]); 
+                songs.push(element.href.split(`/songs/${folder}/`)[1]);
             }
         }
 
@@ -59,7 +59,9 @@ async function getSongs(folder) {
 
         return songs;
     } catch (error) {
-        console.error(error);
+        console.error("Error:", error.message);
+        alert("There was an issue fetching the songs. Please check if the folder exists.");
+        return []; // Return an empty array in case of an error
     }
 }
 
@@ -97,7 +99,7 @@ async function displayAlbums() {
     try {
         let a = await fetch(`https://spotify-clone-qcq2.onrender.com/songs/`);
         if (!a.ok) throw new Error('Failed to fetch albums');
-        
+
         let response = await a.text();
         let div = document.createElement("div");
         div.innerHTML = response;
@@ -139,7 +141,11 @@ async function displayAlbums() {
             card.addEventListener("click", async () => {
                 const folder = card.dataset.folder;
                 songs = await getSongs(folder);
-                playMusic(songs[0]);
+                if (songs.length > 0) {
+                    playMusic(songs[0]);
+                } else {
+                    console.error("No songs found in the folder.");
+                }
             });
         });
 
@@ -154,6 +160,8 @@ async function main() {
         songs = await getSongs(folder);
         if (songs.length > 0) {
             playMusic(songs[0], true);
+        } else {
+            console.log("No songs available for this folder.");
         }
 
         await displayAlbums();
