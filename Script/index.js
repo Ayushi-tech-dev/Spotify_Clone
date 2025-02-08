@@ -20,7 +20,7 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getSongs(folder) {
     currFolder = folder;
-    let a = await fetch(`../songs/${folder}/`);  // Use dynamic folder
+    let a = await fetch(`https://spotify-clone-qcq2.onrender.com/songs/${folder}/`);  // Use absolute URL
     let response = await a.text();
     let div = document.createElement("div");
     div.innerHTML = response;
@@ -29,7 +29,7 @@ async function getSongs(folder) {
     for (let index = 0; index < as.length; index++) {
         const element = as[index];
         if (element.href.endsWith(".mp3")) {
-            songs.push(element.href.split(`/songs/${folder}/`)[1]);  // Fix path splitting
+            songs.push(element.href.split(`/songs/${folder}/`)[1]);
         }
     }
 
@@ -74,7 +74,8 @@ const playMusic = (track, pause = false) => {
 async function displayAlbums() {
     console.log("Displaying albums");
 
-    let a = await fetch(`../songs/`);
+    let a = await fetch(`https://spotify-clone-qcq2.onrender.com/songs/${folder}/`);
+
     let response = await a.text();
 
     let div = document.createElement("div");
